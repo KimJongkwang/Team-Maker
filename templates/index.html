@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player Input</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .input-container {
+            margin-bottom: 20px;
+        }
+        .input-container label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .input-container input[type="text"] {
+            width: 80%;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .input-field {
+            width: 96%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            resize: vertical; /* 세로로 크기 조절을 가능하게 함 */
+        }
+
+        .input-container input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .input-container input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        .box {
+            width: calc(45% + 5px);
+            height: 30px;
+            margin: 10px;
+            padding-top: 10px;
+            background-color: rgb(252, 252, 252);
+            display: inline-block;
+            justify-content: center; /* 수평 가운데 정렬 */
+            align-items: center; /* 수직 가운데 정렬 */
+            text-align: center; /* 텍스트 가운데 정렬 추가 */
+            flex-direction: column; /* 세로 방향으로 요소 배치 */
+        }
+        .field{
+            width: 90%;
+            height: 170px;
+            margin: 10px;
+            position: relative;
+            border: 2px solid black;
+
+        }
+        .box-container {
+            justify-content: center;
+            align-items: center;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .position {
+        margin: 5px auto;
+        text-align: center;
+    }
+
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>섞어섞어 팀을 섞어~</h2>
+        <div class="input-container">
+            {% if not pstat %}
+            <form action="/data" method="post" onsubmit="return validateForm()">
+
+                <label id="reg-player">선수 이름 입력:</label>
+                <textarea id="text_data" name="text_data" class="input-field" rows="10" cols="50" placeholder="입력 예시 : BTS/봉준호/손흥민/박근태/레츠고"></textarea>
+                <br>
+                <!-- <label id="reg-player">같은 팀이면 안되는 사람:</label>
+                <textarea name="text_data" class="input-field" rows="1" cols="50" placeholder="입력 예시 : BTS/봉준호/손흥민/박근태/레츠고"></textarea> -->
+                <input type="submit" value="선수 등록" style="width: 100;">
+            </form>
+            {% else %}
+            <form action="/redirect-index" style="display: inline-block;" method="get">
+                <input type="submit" value="선수등록 다시 하기">
+            </form>
+            <form action="/data" style="display: inline-block;" method="get">
+                <input type="submit" value="다시 섞어~">
+            </form>
+            {% endif %}
+        </div>
+    </div>
+    {% if pstat %}
+
+    {% for g, round in game.items() %}
+    <div class="box-container">
+        <h3>{{ g | capitalize }}</h3>
+        {% for r, posi in round.items() %}
+        <div class="box">
+            <a style="font-weight: bold";>{{r}} 경기</a>
+            <div class="field">
+                <div class="position forward" style="top: 50%; left: 80%;">LW({{ posi.LW }}) FW({{ posi.FW }}) RW({{ posi.RW }})</div>
+                <br>
+                <div class="position midfielder" style="top: 30%; left: 60%;">LM({{ posi.LM }}) CM({{ posi.CM }}) RM({{ posi.RM }})</div>
+                <br>
+                <div class="position defender" style="top: 30%; left: 20%;">LB({{ posi.LB }}) LCB({{ posi.LCB }}) RCB({{ posi.RCB }}) RB({{ posi.RB }})</div>
+                <br>
+                <div class="position goalkeeper" style="top: 0%; left: 10%;">GK({{ posi.GK }})</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+    {% endif %}
+</body>
+</html>
+
+<script>
+    function validateForm() {
+        var textareaValue = document.getElementById("text_data").value;
+        var data = textareaValue.split("/");
+
+        if (data.length < 33) {
+            alert("3팀을 구성하기 위해서는 '/' 구분자를 사용하여 최소 33명을 입력해주세요.");
+            return false;
+        }
+        return true;
+    }
+</script>
