@@ -3,10 +3,15 @@ from typing import List
 
 
 class TeamMaker:
-    def __init__(self, players: List, teams_num=3, distinct_players=["huhu", "lala"], players_match=None) -> None:
+    def __init__(
+        self,
+        players: List,
+        teams_num=3,
+        distinct_players=["huhu", "lala"],
+        players_match=None,
+    ) -> None:
         self.players = players
         self.teams_num = teams_num
-        self.player_stats = [[player, {"GK_count": 0, "play_count": 0}] for player in self.players]
         self.distinct_players = distinct_players
         self.players_match = players_match
 
@@ -15,7 +20,9 @@ class TeamMaker:
             teams = self._distribute_players(self.players, self.teams_num)
             retry = 0
             for team in teams:
-                if (self.distinct_players[0] in team) & (self.distinct_players[1] in team):
+                if (self.distinct_players[0] in team) & (
+                    self.distinct_players[1] in team
+                ):
                     retry = 1
             if not retry:
                 break
@@ -38,6 +45,9 @@ class TeamMaker:
     def allocate_position_per_game(self, team):
         players = team
         players = sorted(players)
+        player_stats = [
+            [player, {"GK_count": 0, "play_count": 0}] for player in players
+        ]
 
         positions = ["LW", "FW", "RW", "LM", "CM", "RM", "LB", "LCB", "RCB", "RB", "GK"]
         players_per_game = 11
@@ -45,9 +55,9 @@ class TeamMaker:
 
         game = {}
         for i in range(1, num_games + 1):
-            random.shuffle(self.player_stats)
-            self.player_stats = sorted(self.player_stats, key=lambda x: x[1]["play_count"])
-            this_game_player = self.player_stats[:players_per_game]
+            random.shuffle(player_stats)
+            player_stats = sorted(player_stats, key=lambda x: x[1]["play_count"])
+            this_game_player = player_stats[:players_per_game]
 
             while True:
                 this_game_position = {}
@@ -55,19 +65,19 @@ class TeamMaker:
                     this_game_position[ps] = self.players_match[man[0]]
                     # 골키퍼되면 GK count 증가
                     if ps == "GK":
-                        where_is_gk = self._where_man(man[0], self.player_stats)
-                        self.player_stats[where_is_gk][1]["GK_count"] += 1
+                        where_is_gk = self._where_man(man[0], player_stats)
+                        player_stats[where_is_gk][1]["GK_count"] += 1
 
                 # 이미 골키퍼 한적 있으면 다시!
                 try:
-                    if self.player_stats[where_is_gk][1]["GK_count"] > 1:
-                        self.player_stats[where_is_gk][1]["GK_count"] -= 1
+                    if player_stats[where_is_gk][1]["GK_count"] > 1:
+                        player_stats[where_is_gk][1]["GK_count"] -= 1
                         random.shuffle(this_game_player)
                     else:
                         # 제대로 골키퍼 선정되었으면, 이번 게임참가자들 play count 증가
                         for man in this_game_player:
-                            where_is_man = self._where_man(man[0], self.player_stats)
-                            self.player_stats[where_is_man][1]["play_count"] += 1
+                            where_is_man = self._where_man(man[0], player_stats)
+                            player_stats[where_is_man][1]["play_count"] += 1
                         break
                 except UnboundLocalError as e:
                     print(self.players)
@@ -76,4 +86,4 @@ class TeamMaker:
                     break
 
             game[i] = this_game_position
-        return game
+        return game, player_stats

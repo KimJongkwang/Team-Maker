@@ -24,20 +24,22 @@ class InputModel(BaseModel):
 
 @app.post("/data")
 async def submit_data(request: Request, text_data: str = Form(...)):
+    text_data_encoded = text_data.encode("utf-8").decode("iso-8859-1")
     player_list = text_data.split("/")
 
     pstat, game = make_team(player_list)
 
     context = {"request": request, "game": game, "pstat": pstat}
     response = templates.TemplateResponse("./index.html", context=context)
-    response.set_cookie("players", text_data)
+    response.set_cookie("players", text_data_encoded)
     return response
 
 
 @app.get("/data")
 async def submit_data(request: Request):
     text_data = request.cookies["players"]
-    player_list = text_data.split("/")
+    text_data_decoded = text_data.encode("iso-8859-1").decode("utf-8")
+    player_list = text_data_decoded.split("/")
 
     pstat, game = make_team(player_list)
 
@@ -62,16 +64,9 @@ def make_team(players):
     teams = tm.choice_team()
 
     all_game = {}
+    all_player = {}
     for i in range(len(teams)):
-        all_game[i] = tm.allocate_position_per_game(teams[i])
+        all_game[f"Team0{i+1}"] = tm.allocate_position_per_game(teams[i])[0]
+        all_player[f"Team0{i+1}"] = tm.allocate_position_per_game(teams[i])[1]
 
-    result = {
-        "Team01": all_game[0],
-        "Team02": all_game[1],
-        "Team03": all_game[2],
-    }
-
-    player_stats = tm.player_stats
-    for plist in player_stats:
-        plist[0] = players_match[plist[0]]
-    return player_stats, result
+    return all_player, all_game

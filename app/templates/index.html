@@ -140,16 +140,19 @@
         <div class="box">
             <a style="font-weight: bold" ;>{{r}} 경기</a>
             <div class="field">
-                <div class="position forward" style="top: 50%; left: 80%;">LW({{ posi.LW }}) FW({{ posi.FW }}) RW({{
-                    posi.RW }})</div>
+                <div class="position forward" style="top: 50%; left: 80%;">{{ posi.LW }}&nbsp;&nbsp;{{ posi.FW
+                    }}&nbsp;&nbsp;{{
+                    posi.RW }}</div>
                 <br>
-                <div class="position midfielder" style="top: 30%; left: 60%;">LM({{ posi.LM }}) CM({{ posi.CM }}) RM({{
-                    posi.RM }})</div>
+                <div class="position midfielder" style="top: 30%; left: 60%;">{{ posi.LM }}&nbsp;&nbsp;{{ posi.CM
+                    }}&nbsp;&nbsp;{{
+                    posi.RM }}</div>
                 <br>
-                <div class="position defender" style="top: 30%; left: 20%;">LB({{ posi.LB }}) LCB({{ posi.LCB }}) RCB({{
-                    posi.RCB }}) RB({{ posi.RB }})</div>
+                <div class="position defender" style="top: 30%; left: 20%;">{{ posi.LB }}&nbsp;&nbsp;{{ posi.LCB
+                    }}&nbsp;&nbsp;{{
+                    posi.RCB }}&nbsp;&nbsp;{{ posi.RB }}</div>
                 <br>
-                <div class="position goalkeeper" style="top: 0%; left: 10%;">GK({{ posi.GK }})</div>
+                <div class="position goalkeeper" style="top: 0%; left: 10%;">{{ posi.GK }}</div>
             </div>
         </div>
         {% endfor %}
