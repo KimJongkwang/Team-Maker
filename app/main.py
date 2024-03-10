@@ -1,11 +1,10 @@
 from pathlib import Path
-import base64
 from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 
-from team_maker import TeamMaker
+from app.team_maker import TeamMaker
 
 
 app = FastAPI()
@@ -59,15 +58,12 @@ async def submit_data():
 def make_team(players):
     players_match = {i: p for i, p in enumerate(players)}
     players_number = list(players_match.keys())
-    # print(players_number)
     tm = TeamMaker(players_number, players_match=players_match)
     teams = tm.choice_team()
 
     all_game = {}
     for i in range(len(teams)):
         all_game[i] = tm.allocate_position_per_game(teams[i])
-
-    # print(all_game)
 
     result = {
         "Team01": all_game[0],
